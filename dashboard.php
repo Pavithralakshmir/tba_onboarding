@@ -6,7 +6,7 @@ include_once 'includes/php/common_php.php';
 <html lang="en">
 
 <head>
-    <title>TBA - Onboarding Tool</title>
+    <title>TBA - Onboarding Tool Dashboard</title>
     <meta charset="utf-8" />
     <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
     <meta name="description" content="Infinity Hub is a Digital Marketing Agency in the Philippines that focuses on SEO, Social Media, Digital Advertising, Web and Mobile applications." />
