@@ -17,17 +17,15 @@ if (isset($_GET['Tmd3ZFVwaCtxWmNsYU1UODJWaUYxUT09'])) {
             $edit_type = $row['type'];
         }
     } else if ($action == 'deactive') {
-        $sql = "UPDATE `tba_service_type` SET `status` = '1' where id='$id'";
-        $result = mysqli_query($conn, $sql);
-        $sql = "UPDATE `tba_service_type` SET `status` = '1' where `parent`='$id'";
+        $sql = "UPDATE `tba_service_type` SET `is_active` = '1' where id='$id'";
         $result = mysqli_query($conn, $sql);
         header("Location: add_tba_service_type.php?msg=3");
     } else if ($action == 'active') {
-        $sql = "UPDATE `tba_service_type` SET `status` = '0' where id='$id'";
+        $sql = "UPDATE `tba_service_type` SET `is_active` = '0' where id='$id'";
         $result = mysqli_query($conn, $sql);
         header("Location: add_tba_service_type.php?msg=3");
     } else if ($action == 'delete') {
-        $sql = "UPDATE `tba_service_type` SET `is_active` = '1' where id='$id'";
+        $sql = "UPDATE `tba_service_type` SET `is_delete` = '1' where id='$id'";
         $result = mysqli_query($conn, $sql);
         header("Location: add_tba_service_type.php?msg=4");
     }
@@ -100,111 +98,122 @@ if (isset($_POST['type'])) {
                 ?>
                 <!--begin::Content-->
                 <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
-                    <!--begin::Toolbar-->
-                    <div class="toolbar" id="kt_toolbar">
-                        <!--begin::Container-->
-                        <div id="kt_toolbar_container" class="container-fluid d-flex flex-stack">
-                            <!--begin::Page title-->
-                            <div data-kt-swapper="true" data-kt-swapper-mode="prepend" data-kt-swapper-parent="{default: '#kt_content_container', 'lg': '#kt_toolbar_container'}" class="page-title d-flex align-items-center flex-wrap me-3 mb-5 mb-lg-0">
-                                <!--begin::Title-->
-                                <h1 class="d-flex align-items-center text-dark fw-bolder fs-3 my-1">Add TBA Service Type</h1>
-                                <!--end::Title-->
-                                <!--begin::Separator-->
-                                <span class="h-20px border-gray-300 border-start mx-4"></span>
-                                <!--end::Separator-->
-                                <!--begin::Breadcrumb-->
-                                <ul class="breadcrumb breadcrumb-separatorless fw-bold fs-7 my-1">
-                                    <!--begin::Item-->
-                                    <li class="breadcrumb-item text-muted">
-                                        <a href="index.php" class="text-muted text-hover-primary">Home</a>
-                                    </li>
-                                    <!--end::Item-->
-                                    <!--begin::Item-->
-                                    <li class="breadcrumb-item">
-                                        <span class="bullet bg-gray-300 w-5px h-2px"></span>
-                                    </li>
-                                    <!--end::Item-->
-                                    <!--begin::Item-->
-                                    <li class="breadcrumb-item text-dark">Add TBA Service Type</li>
-                                    <!--end::Item-->
-                                </ul>
-                                <!--end::Breadcrumb-->
-                            </div>
-                            <!--end::Page title-->
-                        </div>
-                        <!--end::Container-->
-                    </div>
-                    <!--end::Toolbar-->
                     <!--begin::Post-->
                     <div class="post d-flex flex-column-fluid" id="kt_post">
                         <!--begin::Container-->
                         <div id="kt_content_container" class="container-xxl">
                             <!--begin::Card-->
-                            <div class="card">
+                            <div class="card p-4">
                                 <!--begin::Card header-->
-                                <div class="text-center">
-                                    <!--begin::Title-->
-                                    <h3 class="fs-2hx text-dark mt-8">Add TBA Service Type Form</h3>
-                                    <!--end::Title-->
-                                </div>
+                                <!--begin::Title-->
+                                <h3 class="fs-1hx text-dark mt-8">Create Sub Category</h3>
+                                <!--end::Title-->
                                 <!--end::Card header-->
                                 <!--begin::Card body-->
-                                <div class="card-body pt-0">
+                                <div class="card-body p-0 m-2">
                                     <!--begin::Form-->
-                                    <form class="form mb-15" role="form" method="POST" enctype="multipart/form-data" id="add_new_type">
+                                    <form class="form" role="form" method="POST" enctype="multipart/form-data" id="add_new_type">
                                         <input id="edit_id" type="hidden" value="<?php echo $idd ?>" />
                                         <!--begin::Input group-->
                                         <div class="row mb-5">
                                             <!--begin::Col-->
                                             <div class="col-md-6 fv-row">
+                                                <div class="row mb-6">
+                                                    <!--begin::Label-->
+                                                    <label class="required fs-5 mb-2">TBA Service Category</label>
+                                                    <!--end::Label-->
+                                                    <!--begin::Input-->
+                                                    <select name="tba_service_category" id="tba_service_category" data-control="select2" data-placeholder="Select a Serivice Category..." class="form-select form-select-solid">
+                                                        <option value=""></option>
+                                                        <?php
+                                                        $tba_service_category_sql = "SELECT * FROM `tba_service_category` WHERE `is_active` = '0'";
+                                                        $tba_service_category_result = mysqli_query($conn, $tba_service_category_sql);
+                                                        while ($row = mysqli_fetch_assoc($tba_service_category_result)) { ?>
+                                                            <option value="<?php echo $row['id']; ?>" <?php if ($row['id'] == $edit_category) {
+                                                                                                            echo "selected";
+                                                                                                        } ?>>
+                                                                <?php echo $row['category']; ?>
+                                                            </option>
+                                                        <?php } ?>
+                                                    </select>
+                                                    <!--end::Input-->
+                                                </div>
+                                                <div class="row">
+                                                    <!--begin::Label-->
+                                                    <label class="required fs-5 mb-2">Add Subcategory</label>
+                                                    <!--end::Label-->
+                                                    <!--begin::Input-->
+                                                    <input type="text" class="form-control form-control-solid" placeholder="" name="type" id="type" value="<?php echo $edit_type; ?>" />
+                                                    <!--end::Input-->
+                                                </div>
+                                            </div>
+                                            <!--end::Col-->
+                                            <!--begin::Col-->
+                                            <div class="col-md-3 fv-row text-center">
                                                 <!--begin::Label-->
-                                                <label class="required fs-5 fw-bold mb-2">TBA Service Category</label>
+                                                <label class="required fs-6 fw-bold mb-5">
+                                                    <span>Update Thumbnail Image</span>
+                                                    <i class="fas fa-exclamation-circle ms-1 fs-7" data-bs-toggle="tooltip" title="Allowed file types: png, jpg, jpeg."></i>
+                                                </label>
                                                 <!--end::Label-->
                                                 <!--begin::Input-->
-                                                <select name="tba_service_category" id="tba_service_category" data-control="select2" data-placeholder="Select a Serivice Category..." class="form-select form-select-solid">
-                                                    <option value=""></option>
-                                                    <?php
-                                                    $tba_service_category_sql = "SELECT * FROM `tba_service_category` WHERE `is_active` = '0'";
-                                                    $tba_service_category_result = mysqli_query($conn, $tba_service_category_sql);
-                                                    while ($row = mysqli_fetch_assoc($tba_service_category_result)) { ?>
-                                                        <option value="<?php echo $row['id']; ?>" <?php if ($row['id'] == $edit_category) {
-                                                                                                        echo "selected";
-                                                                                                    } ?>>
-                                                            <?php echo $row['category']; ?>
-                                                        </option>
-                                                    <?php } ?>
-                                                </select>
+                                                <!--begin::Image input wrapper-->
+                                                <div class="mt-1">
+                                                    <!--begin::Image input-->
+                                                    <div class="image-input image-input-outline" data-kt-image-input="true" style="background-image: url('assets/media/svg/avatars/blank.svg')">
+                                                        <!--begin::Preview existing avatar-->
+                                                        <div class="image-input-wrapper w-100px h-100px" style="background-image: <?php if ($edit_inst) {
+                                                                                                                                        echo "url('" . $edit_inst . "')";
+                                                                                                                                    } else {
+                                                                                                                                        echo "url('assets/media/svg/avatars/blank.svg')";
+                                                                                                                                    } ?> "></div>
+                                                        <!--end::Preview existing avatar-->
+                                                        <!--begin::Edit-->
+                                                        <label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="change" data-bs-toggle="tooltip" title="Change Image">
+                                                            <i class="bi bi-pencil-fill fs-7"></i>
+                                                            <!--begin::Inputs-->
+                                                            <input type="file" name="inst" accept=".png, .jpg, .jpeg" id="inst" value="<?php echo $edit_inst; ?>" />
+                                                            <!-- <input type="hidden" name="inst" /> -->
+                                                            <!--end::Inputs-->
+                                                        </label>
+                                                        <!--end::Edit-->
+                                                        <!--begin::Cancel-->
+                                                        <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="cancel" data-bs-toggle="tooltip" title="Cancel Image">
+                                                            <i class="bi bi-x fs-2"></i>
+                                                        </span>
+                                                        <!--end::Cancel-->
+                                                        <!--begin::Remove-->
+                                                        <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="remove" data-bs-toggle="tooltip" title="Remove Image">
+                                                            <i class="bi bi-x-circle fs-2"></i>
+                                                        </span>
+                                                        <!--end::Remove-->
+                                                    </div>
+                                                    <!--end::Image input-->
+                                                </div>
+                                                <!--end::Image input wrapper-->
                                                 <!--end::Input-->
                                             </div>
                                             <!--end::Col-->
                                             <!--begin::Col-->
-                                            <div class="col-md-6 fv-row">
-                                                <!--begin::Label-->
-                                                <label class="required fs-5 fw-bold mb-2">Add Type</label>
-                                                <!--end::Label-->
-                                                <!--begin::Input-->
-                                                <input type="text" class="form-control form-control-solid" placeholder="" name="type" id="type" value="<?php echo $edit_type; ?>" />
-                                                <!--end::Input-->
+                                            <div class="col-md-3 fv-row text-center">
+                                                <!--begin::Submit-->
+                                                <button type="reset" class="btn btn-light btn-active-light-primary m-5">
+                                                    <!--begin::Indicator-->
+                                                    <span class="indicator-label"><img src="assets/media/icons/clear_icon_1.png"> Clear Field</span>
+                                                    <!--end::Indicator-->
+                                                </button>
+                                                <button type="submit" class="btn btn-primary m-5" id="add_new_type_submit_button" name="add_new_category_submit">
+                                                    <!--begin::Indicator-->
+                                                    <span class="indicator-label">Create Service</span>
+                                                    <span class="indicator-progress">Please wait...
+                                                        <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
+                                                    <!--end::Indicator-->
+                                                </button>
+                                                <!--end::Submit-->
                                             </div>
                                             <!--end::Col-->
                                         </div>
                                         <!--end::Input group-->
-                                        <div class="text-center pt-8">
-                                            <!--begin::Submit-->
-                                            <button type="reset" class="btn btn-warning">
-                                                <!--begin::Indicator-->
-                                                <span class="indicator-label">Cancle</span>
-                                                <!--end::Indicator-->
-                                            </button>
-                                            <button type="submit" class="btn btn-success" id="add_new_type_submit_button" name="add_new_category_submit">
-                                                <!--begin::Indicator-->
-                                                <span class="indicator-label">Save Now</span>
-                                                <span class="indicator-progress">Please wait...
-                                                    <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
-                                                <!--end::Indicator-->
-                                            </button>
-                                            <!--end::Submit-->
-                                        </div>
                                     </form>
                                     <!--end::Form-->
                                 </div>
@@ -214,20 +223,13 @@ if (isset($_POST['type'])) {
                             <br>
                             <!--begin::Card-->
                             <div class="card">
-                                <!--begin::Card header-->
-                                <div class="text-center">
-                                    <!--begin::Title-->
-                                    <h3 class="fs-2hx text-dark mt-8">Edit And Delete TBA Service Type</h3>
-                                    <!--end::Title-->
-                                </div>
-                                <!--end::Card header-->
                                 <!--begin::Card body-->
-                                <div class="card-body pt-8">
+                                <div class="card-body">
                                     <!--begin::Form-->
                                     <!--begin::Card body-->
-                                    <div class="card-body pt-0">
+                                    <div class="card-body">
                                         <!--begin::Search-->
-                                        <div class="d-flex align-items-center position-relative my-1 col-md-4 fv-row">
+                                        <div class="d-flex align-items-center position-relative my-1 fv-row">
                                             <!--begin::Svg Icon | path: icons/duotune/general/gen021.svg-->
                                             <span class="svg-icon svg-icon-1 position-absolute ms-6">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -245,12 +247,12 @@ if (isset($_POST['type'])) {
                                             <thead>
                                                 <!--begin::Table row-->
                                                 <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-                                                    <th class="min-w-15px text-center">SlNo</th>
+                                                    <th class="min-w-15px text-center">Sl.No</th>
+                                                    <th class="min-w-155px text-center">Category</th>
+                                                    <th class="min-w-155px">Subcaregory</th>
+                                                    <th class="min-w-80px">Status</th>
                                                     <th class="min-w-80px text-center">Actions</th>
-                                                    <th class="min-w-125px">Category</th>
-                                                    <th class="min-w-125px">Type</th>
-                                                    <th class="min-w-125px"></th>
-                                                    <th class="text-cenetr min-w-70px"></th>
+                                                    <th class="text-cenetr min-w-1px"></th>
                                                 </tr>
                                                 <!--end::Table row-->
                                             </thead>
@@ -259,7 +261,7 @@ if (isset($_POST['type'])) {
                                             <tbody class="fw-bold text-gray-600 ui-sortable">
                                                 <?php
                                                 $i = 1;
-                                                $sql = "SELECT * FROM `tba_service_type` where `is_active`='0' ORDER BY `position` asc";
+                                                $sql = "SELECT * FROM `tba_service_type` where `is_delete`='0' ORDER BY `position` asc";
                                                 $result = mysqli_query($conn, $sql);
                                                 while ($row = mysqli_fetch_assoc($result)) {
                                                     $id = encrypt_decrypt('encrypt', $row['id']);
@@ -267,10 +269,6 @@ if (isset($_POST['type'])) {
                                                     <tr id="<?php echo $row['id']; ?>">
                                                         <td class="priority">
                                                             <?php echo $i; ?>
-                                                        </td>
-                                                        <td>
-                                                            <a href="add_tba_service_type.php?<?php echo $action_string . '=' . $edit_string . '&' . $id_string . '=' . $id; ?>" class="menu-link px-3">Edit</a>
-                                                            <a onclick="deletion('<?php echo $action_string . '=' . $delete_string . '&' . $id_string . '=' . $id; ?>')" class="menu-link px-3" data-kt-customer-table-filter="delete_row">Delete</a>
                                                         </td>
                                                         <td class="text_limit">
                                                             <?php
@@ -280,7 +278,25 @@ if (isset($_POST['type'])) {
                                                         <td>
                                                             <?php echo $row['type']; ?>
                                                         </td>
-                                                        <td></td>
+                                                        <td>
+                                                            <label class="form-check form-switch form-check-custom form-check-solid">
+                                                                <!--begin::Input-->
+                                                                <?php if ($row['is_active'] == '0') { ?>
+                                                                    <a onclick="deactive('<?php echo $action_string . '=' . $deactive_string . '&' . $id_string . '=' . $id; ?>')">
+                                                                        <input class="form-check-input" name="is_active" type="checkbox" value="1" <?php echo ($row['is_active'] == '0') ? 'checked' : '' ?>>
+                                                                    </a>
+                                                                <?php } else { ?>
+                                                                    <a onclick="active('<?php echo $action_string . '=' . $active_string . '&' . $id_string . '=' . $id; ?>')">
+                                                                        <input class="form-check-input" name="is_active" type="checkbox" value="0" <?php echo ($row['is_active'] == '1') ? '' : 'checked' ?>>
+                                                                    </a>
+                                                                <?php } ?>
+                                                                <!--end::Input-->
+                                                            </label>
+                                                        </td>
+                                                        <td>
+                                                            <a href="add_tba_service_type.php?<?php echo $action_string . '=' . $edit_string . '&' . $id_string . '=' . $id; ?>" class="menu-link px-3"><img src="assets/media/icons/c_edit_icon_1.png"></a>
+                                                            <a onclick="deletion('<?php echo $action_string . '=' . $delete_string . '&' . $id_string . '=' . $id; ?>')" class="menu-link px-3" data-kt-customer-table-filter="delete_row"><img src="assets/media/icons/remove_icon_1.png"></a>
+                                                        </td>
                                                         <td></td>
                                                     </tr>
                                                 <?php
@@ -437,6 +453,24 @@ if (isset($_POST['type'])) {
     function deletion(strr) {
         if (strr) {
             var r = confirm("Are You Sure Want To Delete ?");
+            if (r == true) {
+                window.location = "add_tba_service_type.php?" + strr;
+            }
+        }
+    }
+
+    function active(strr) {
+        if (strr) {
+            var r = confirm("Are You Sure Want To Active This ?");
+            if (r == true) {
+                window.location = "add_tba_service_type.php?" + strr;
+            }
+        }
+    }
+
+    function deactive(strr) {
+        if (strr) {
+            var r = confirm("Are You Sure Want To Deactive This ?");
             if (r == true) {
                 window.location = "add_tba_service_type.php?" + strr;
             }

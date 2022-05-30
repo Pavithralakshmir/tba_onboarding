@@ -1,31 +1,31 @@
 <?php
 include_once 'includes/php/common_php.php';
 
-$edit_category = $id =  $idd = '';
+$edit_features = $id =  $idd = '';
 if (isset($_GET['Tmd3ZFVwaCtxWmNsYU1UODJWaUYxUT09'])) {
     $encrypt_action = $_GET['Tmd3ZFVwaCtxWmNsYU1UODJWaUYxUT09'];
     $action = encrypt_decrypt('decrypt', $encrypt_action);
     $encrypt_id = $_GET['WnAyV3FOdHJ3dkNiMEgrMGxVcytZUT09'];
     $id = encrypt_decrypt('decrypt', $encrypt_id);
     if ($action == 'edit') {
-        $sql = "SELECT `id`, `category` FROM `tba_service_category` WHERE `id` ='$id' ";
+        $sql = "SELECT `id`, `features` FROM `tba_features` WHERE `id` ='$id' ";
         $result = mysqli_query($conn, $sql);
         while ($row = mysqli_fetch_assoc($result)) {
             $idd = $row['id'];
-            $edit_category = $row['category'];
+            $edit_features = $row['features'];
         }
     } else if ($action == 'deactive') {
-        $sql = "UPDATE `tba_service_category` SET `is_active` = '1' where id='$id'";
+        $sql = "UPDATE `tba_features` SET `status` = '1' where id='$id'";
         $result = mysqli_query($conn, $sql);
-        header("Location: add_tba_service_category.php?msg=3");
+        header("Location: add_m_features.php?msg=3");
     } else if ($action == 'active') {
-        $sql = "UPDATE `tba_service_category` SET `is_active` = '0' where id='$id'";
+        $sql = "UPDATE `tba_features` SET `status` = '0' where id='$id'";
         $result = mysqli_query($conn, $sql);
-        header("Location: add_tba_service_category.php?msg=3");
+        header("Location: add_m_features.php?msg=3");
     } else if ($action == 'delete') {
-        $sql = "UPDATE `tba_service_category` SET `is_delete` = '1' where id='$id'";
+        $sql = "UPDATE `tba_features` SET `is_delete` = '1' where id='$id'";
         $result = mysqli_query($conn, $sql);
-        header("Location: add_tba_service_category.php?msg=4");
+        header("Location: add_m_features.php?msg=4");
     }
 }
 
@@ -33,29 +33,29 @@ if (isset($_POST['order'])) {
     $id_array = $_POST['order'];
     foreach ($id_array as $key => $value) {
         if ($value) {
-            $sql = "UPDATE `tba_service_category` SET `position`='$key' where id='$value'";
+            $sql = "UPDATE `tba_features` SET `position`='$key' where id='$value'";
             $result = mysqli_query($conn, $sql);
         }
     }
     exit;
 }
 
-if (isset($_POST['category'])) {
-    $category = mysqli_real_escape_string($conn, $_POST["category"]);
+if (isset($_POST['features'])) {
+    $features = mysqli_real_escape_string($conn, $_POST["features"]);
     $id = $_POST["id"];
     if ($id) {
-        $sql6 = "UPDATE `tba_service_category` SET `category`= '$category' WHERE id='$id'";
+        $sql6 = "UPDATE `tba_features` SET `features`= '$features' WHERE id='$id'";
         $res6 = mysqli_query($conn, $sql6);
-        header("Location: add_tba_service_category.php");
+        header("Location: add_m_features.php");
     } else {
-        $sql5 = "SELECT * FROM `tba_service_category` where `category` = '$category'";
+        $sql5 = "SELECT * FROM `tba_features` where `features` = '$features'";
         $res5 = mysqli_query($conn, $sql5);
         if (mysqli_num_rows($res5)) {
             $msg = 1;
         } else {
-            $sql6 = "INSERT INTO `tba_service_category`(`category`) VALUES ('$category')";
+            $sql6 = "INSERT INTO `tba_features`(`features`) VALUES ('$features')";
             $res6 = mysqli_query($conn, $sql6);
-            header("Location: add_tba_service_category.php");
+            header("Location: add_m_features.php");
         }
     }
 }
@@ -100,26 +100,28 @@ if (isset($_POST['category'])) {
                         <!--begin::Container-->
                         <div id="kt_content_container" class="container-xxl">
                             <!--begin::Card-->
-                            <div class="card  p-4">
+                            <div class="card">
                                 <!--begin::Card header-->
-                                <!--begin::Title-->
-                                <h3 class="fs-1hx text-dark p-2">Create Service Category</h3>
-                                <!--end::Title-->
+                                <div class="text-center">
+                                    <!--begin::Title-->
+                                    <h3 class="fs-2hx text-dark mt-8">Add TBA Service features Form</h3>
+                                    <!--end::Title-->
+                                </div>
                                 <!--end::Card header-->
                                 <!--begin::Card body-->
-                                <div class="card-body p-0 m-2">
+                                <div class="card-body pt-0">
                                     <!--begin::Form-->
-                                    <form class="form" role="form" method="POST" enctype="multipart/form-data" id="add_new_category">
+                                    <form class="form mb-15" role="form" method="POST" enctype="multipart/form-data" id="add_new_features">
                                         <input id="edit_id" type="hidden" value="<?php echo $idd ?>" />
                                         <!--begin::Input group-->
                                         <div class="row mb-5">
                                             <!--begin::Col-->
                                             <div class="col-md-6 fv-row">
                                                 <!--begin::Label-->
-                                                <label class="required fs-5 fw-bold mb-2">Service Category</label>
+                                                <label class="required fs-5 fw-bold mb-2">Add Features</label>
                                                 <!--end::Label-->
                                                 <!--begin::Input-->
-                                                <input type="text" class="form-control form-control-solid" placeholder="" name="category" id="category" value="<?php echo $edit_category; ?>" />
+                                                <input type="text" class="form-control form-control-solid" placeholder="" name="features" id="features" value="<?php echo $edit_features; ?>" />
                                                 <!--end::Input-->
                                             </div>
                                             <!--end::Col-->
@@ -127,14 +129,14 @@ if (isset($_POST['category'])) {
                                             <div class="col-md-6 fv-row">
                                                 <div class="text-center pt-8">
                                                     <!--begin::Submit-->
-                                                    <button type="reset" class="btn btn-light btn-active-light-primary me-2">
+                                                    <button type="reset" class="btn btn-warning">
                                                         <!--begin::Indicator-->
-                                                        <span class="indicator-label"><img src="assets/media/icons/clear_icon_1.png"> Clear Field</span>
+                                                        <span class="indicator-label">Cancle</span>
                                                         <!--end::Indicator-->
                                                     </button>
-                                                    <button type="submit" class="btn btn-primary" id="add_new_category_submit_button" name="add_new_category_submit">
+                                                    <button type="submit" class="btn btn-success" id="add_new_features_submit_button" name="add_new_features_submit">
                                                         <!--begin::Indicator-->
-                                                        <span class="indicator-label">Create Category</span>
+                                                        <span class="indicator-label">Save Now</span>
                                                         <span class="indicator-progress">Please wait...
                                                             <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
                                                         <!--end::Indicator-->
@@ -154,10 +156,17 @@ if (isset($_POST['category'])) {
                             <br>
                             <!--begin::Card-->
                             <div class="card">
+                                <!--begin::Card header-->
+                                <div class="text-center">
+                                    <!--begin::Title-->
+                                    <h3 class="fs-2hx text-dark mt-8">Edit And Delete TBA Service features</h3>
+                                    <!--end::Title-->
+                                </div>
+                                <!--end::Card header-->
                                 <!--begin::Card body-->
-                                <div class="card-body">
+                                <div class="card-body pt-0">
                                     <!--begin::Search-->
-                                    <div class="d-flex align-items-center position-relative my-1 fv-row">
+                                    <div class="d-flex align-items-center position-relative my-1 col-md-4 fv-row">
                                         <!--begin::Svg Icon | path: icons/duotune/general/gen021.svg-->
                                         <span class="svg-icon svg-icon-1 position-absolute ms-6">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -175,10 +184,12 @@ if (isset($_POST['category'])) {
                                         <thead>
                                             <!--begin::Table row-->
                                             <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-                                                <th class="w-100px text-center">Sl.No</th>
-                                                <th class="min-w-155px">Category</th>
-                                                <th class="min-w-50px">Status</th>
+                                                <th class="w-15px">SlNo</th>
                                                 <th class="min-w-125px">Actions</th>
+                                                <th class="min-w-125px">features</th>
+                                                <th class="min-w-125px"></th>
+                                                <th class="text-cenetr min-w-70px"></th>
+                                                <th class="text-cenetr min-w-70px"></th>
                                             </tr>
                                             <!--end::Table row-->
                                         </thead>
@@ -187,44 +198,32 @@ if (isset($_POST['category'])) {
                                         <tbody class="fw-bold text-gray-600 ui-sortable">
                                             <?php
                                             $i = 1;
-                                            $sql = "SELECT * FROM `tba_service_category` where `is_delete`='0' ORDER BY `position` asc";
+                                            $sql = "SELECT * FROM `tba_features` where `is_delete`='0' ORDER BY `position` asc";
                                             $result = mysqli_query($conn, $sql);
                                             while ($row = mysqli_fetch_assoc($result)) {
                                                 $id = encrypt_decrypt('encrypt', $row['id']);
                                             ?>
                                                 <tr id="<?php echo $row['id']; ?>">
                                                     <!--begin::Name=-->
-                                                    <td class="priority text-center">
+                                                    <td class="priority">
                                                         <?php echo $i; ?>
                                                     </td>
                                                     <!--end::Name=-->
+                                                    <!--begin::Action=-->
+                                                    <td>
+                                                        <a href="add_m_features.php?<?php echo $action_string . '=' . $edit_string . '&' . $id_string . '=' . $id; ?>" class="menu-link px-3">Edit</a>
+                                                        <a onclick="deletion('<?php echo $action_string . '=' . $delete_string . '&' . $id_string . '=' . $id; ?>')" class="menu-link px-3" data-kt-customer-table-filter="delete_row">Delete</a>
+                                                    </td>
+                                                    <!--end::Action=-->
                                                     <!--begin::Company=-->
                                                     <td>
                                                         <?php
-                                                        echo $row['category'];
+                                                        echo $row['features'];
                                                         ?>
                                                     </td>
-                                                    <td>
-                                                        <label class="form-check form-switch form-check-custom form-check-solid">
-                                                            <!--begin::Input-->
-                                                            <?php if ($row['is_active'] == '0') { ?>
-                                                                <a onclick="deactive('<?php echo $action_string . '=' . $deactive_string . '&' . $id_string . '=' . $id; ?>')">
-                                                                    <input class="form-check-input" name="is_active" type="checkbox" value="1" <?php echo ($row['is_active'] == '0') ? 'checked' : '' ?>>
-                                                                </a>
-                                                            <?php } else { ?>
-                                                                <a onclick="active('<?php echo $action_string . '=' . $active_string . '&' . $id_string . '=' . $id; ?>')">
-                                                                    <input class="form-check-input" name="is_active" type="checkbox" value="0" <?php echo ($row['is_active'] == '1') ? '' : 'checked' ?>>
-                                                                </a>
-                                                            <?php } ?>
-                                                            <!--end::Input-->
-                                                        </label>
-                                                    </td>
-                                                    <!--begin::Action=-->
-                                                    <td>
-                                                        <a href="add_tba_service_category.php?<?php echo $action_string . '=' . $edit_string . '&' . $id_string . '=' . $id; ?>" class="menu-link px-3"><img src="assets/media/icons/c_edit_icon_1.png"></a>
-                                                        <a onclick="deletion('<?php echo $action_string . '=' . $delete_string . '&' . $id_string . '=' . $id; ?>')" class="menu-link px-3" data-kt-customer-table-filter="delete_row"><img src="assets/media/icons/remove_icon_1.png"></a>
-                                                    </td>
-                                                    <!--end::Action=-->
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
                                                     <!--end::Company=-->
                                                 </tr>
                                             <?php
@@ -259,14 +258,14 @@ if (isset($_POST['category'])) {
 <script>
     $(document).ready(function() {
         var t, e, i;
-        i = document.querySelector("#add_new_category");
-        t = document.getElementById("add_new_category_submit_button");
+        i = document.querySelector("#add_new_features");
+        t = document.getElementById("add_new_features_submit_button");
         (e = FormValidation.formValidation(i, {
             fields: {
-                category: {
+                features: {
                     validators: {
                         notEmpty: {
-                            message: "Category is required"
+                            message: "Features is required"
                         }
                     }
                 },
@@ -305,18 +304,18 @@ if (isset($_POST['category'])) {
     });
 
     function myFunction() {
-        var category = $("#category").val();
+        var features = $("#features").val();
         var id = $("#edit_id").val();
         $.ajax({
             type: "post",
-            url: "add_tba_service_category.php",
+            url: "add_m_features.php",
             data: {
-                category: category,
+                features: features,
                 id: id
             },
             success: function(response) {
                 // console.log(response);
-                window.location = 'add_tba_service_category.php';
+                window.location = 'add_m_features.php';
             },
             error: function() {
                 alert('Error occurs!');
@@ -356,7 +355,7 @@ if (isset($_POST['category'])) {
             all[count] = trid;
             //alert(JSON.stringify(all));
         });
-        $.post("add_tba_service_category.php", {
+        $.post("add_m_features.php", {
                 order: all
             },
             function(data, status) {
@@ -369,25 +368,7 @@ if (isset($_POST['category'])) {
         if (strr) {
             var r = confirm("Are You Sure Want To Delete ?");
             if (r == true) {
-                window.location = "add_tba_service_category.php?" + strr;
-            }
-        }
-    }
-
-    function active(strr) {
-        if (strr) {
-            var r = confirm("Are You Sure Want To Active This ?");
-            if (r == true) {
-                window.location = "add_tba_service_category.php?" + strr;
-            }
-        }
-    }
-
-    function deactive(strr) {
-        if (strr) {
-            var r = confirm("Are You Sure Want To Deactive This ?");
-            if (r == true) {
-                window.location = "add_tba_service_category.php?" + strr;
+                window.location = "add_m_features.php?" + strr;
             }
         }
     }

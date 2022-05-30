@@ -5,8 +5,8 @@
 <link href="assets/plugins/custom/datatables/datatables.bundle.css" rel="stylesheet" type="text/css" />
 <link href="assets/plugins/global/plugins.bundle.css" rel="stylesheet" type="text/css" />
 <link href="assets/css/style.bundle.css" rel="stylesheet" type="text/css" />
-<?php include_once ('includes/css/commoncss.php'); ?>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<link href="includes/css/select_multiple_tag.css" rel="stylesheet" type="text/css" />
+<?php include_once('includes/css/commoncss.php'); ?>
 <script>
     (function(w, d, s, l, i) {
         w[l] = w[l] || [];
@@ -38,4 +38,5 @@
 <!--end::Page Vendors Javascript-->
 <script src="assets/js/widgets.bundle.js"></script>
 <script src="includes/js/common_pagination_datatable.js"></script>
-<?php include_once ('includes/js/commonjs.php'); ?>
+<script src="includes/js/select_multiple_tag.js"></script>
+<?php include_once('includes/js/commonjs.php'); ?>

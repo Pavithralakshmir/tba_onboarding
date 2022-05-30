@@ -79,97 +79,68 @@ if (isset($_POST['email'])) {
 </head>
 
 <body id="kt_body" class="header-fixed header-tablet-and-mobile-fixed toolbar-enabled toolbar-fixed aside-enabled aside-fixed" style="--kt-toolbar-height:55px;--kt-toolbar-height-tablet-and-mobile:55px">
-	<!--begin::Root-->
-	<div class="d-flex flex-column flex-root">
-		<!--begin::Authentication - Sign-in -->
-		<div class="d-flex flex-column flex-column-fluid bgi-position-y-bottom position-x-center bgi-no-repeat bgi-size-contain bgi-attachment-fixed" style="background-image: url(/metronic8/demo1/assets/media/illustrations/sketchy-1/14.png">
-			<!--begin::Content-->
-			<div class="d-flex flex-center flex-column flex-column-fluid p-10 pb-lg-20">
-				<!--begin::Logo-->
-				<a class="mb-12">
-					<img alt="Logo" src="assets/media/logos/logo-1.svg" class="h-40px" />
-				</a>
-				<!--end::Logo-->
-				<!--begin::Wrapper-->
-				<div class="w-lg-500px bg-body rounded shadow-sm p-10 p-lg-15 mx-auto" style="border-style: groove;">
-					<!--begin::Form-->
-					<form class="form w-100" novalidate="novalidate" id="kt_sign_in_form" action="#">
-						<!--begin::Heading-->
-						<div class="text-center mb-10">
-							<!--begin::Title-->
-							<h1 class="text-dark mb-3">Sign In to TBA onboard</h1>
-							<!--end::Title-->
-							<!--begin::Link-->
-							<div class="text-gray-400 fw-bold fs-4">New Here?
-								<a href="addusers.php" class="link-primary fw-bolder">Create an Account</a>
+	<!--begin::Content-->
+	<div class="content d-flex flex-column flex-column-fluid" id="kt_content">
+		<!--begin::Post-->
+		<div class="post d-flex flex-column-fluid" id="kt_post">
+			<!--begin::Container-->
+			<div id="kt_content_container" class="container-xxl">
+				<!--begin::Card-->
+				<form class="form w-100" novalidate="novalidate" id="kt_sign_in_form" action="#">
+					<div class="row text-center">
+						<div class="col-md-6 login_ui p-10 d-md-block d-none">
+							<img src="assets/media/icons/bg_img/login_bg_1.png" class="m-auto text-center">
+						</div>
+						<div class="col-md-6 card">
+							<div class="row">
+								<div class="image-input-wrapper w-250px h-50px text-end m-5" style="background-image: url(assets/media/icons/bg_img/login_logo_bg_3.png)"></div>
+								<div class="text-center">
+									<img src="assets/media/icons/bg_img/login_bg_2.png" class="h-200px" style="width: inherit;">
+								</div>
 							</div>
-							<!--end::Link-->
-						</div>
-						<!--begin::Heading-->
-						<!--begin::Input group-->
-						<div class="fv-row mb-10">
-							<!--begin::Label-->
-							<label class="form-label fs-6 fw-bolder text-dark">Email</label>
-							<!--end::Label-->
-							<!--begin::Input-->
-							<input class="form-control form-control-lg form-control-solid" type="text" name="email" id="email" autocomplete="off" />
-							<!--end::Input-->
-						</div>
-						<!--end::Input group-->
-						<!--begin::Input group-->
-						<div class="fv-row mb-10">
-							<!--begin::Wrapper-->
-							<div class="d-flex flex-stack mb-2">
+							<div class="p-10">
 								<!--begin::Label-->
-								<label class="form-label fw-bolder text-dark fs-6 mb-0">Password</label>
+								<label class="row form-label fs-6 fw-bolder text-black">User Name</label>
 								<!--end::Label-->
-								<!--begin::Link-->
-								<a href="passwordreset.php" class="link-primary fs-6 fw-bolder">Forgot Password ?</a>
-								<!--end::Link-->
+								<input type="text" class="fv-row profile_form_control mb-8" name="email" id="email" value="" />
+								<!--begin::Label-->
+								<label class="row form-label fs-6 fw-bolder text-black">Password</label>
+								<!--end::Label-->
+								<input type="password" class="fv-row profile_form_control mb-8" name="password" id="pwd" value="" />
+								<!--begin::Wrapper-->
+								<div class="d-flex flex-stack mb-2">
+									<!--begin::Label-->
+									<div class="form-check form-check-sm form-check-custom form-check-solid">
+										<input class="form-check-input me-2" type="checkbox" value="1">
+										<label class="form-label text-gray fs-6 mb-0">Remember</label>
+									</div>
+									<!--end::Label-->
+									<!--begin::Link-->
+									<a href="passwordreset.php" class="link-primary fs-6 fw-bolder">Forgot Password ?</a>
+									<!--end::Link-->
+								</div>
+								<!--end::Wrapper-->
+								<div class="text-center m-5">
+									<!--begin::Submit button-->
+									<button type="submit" id="kt_sign_in_submit" class="btn btn-lg btn-info w-150px mb-5" style="background-color: #4A51AF;">
+										<span class="indicator-label">Login</span>
+										<span class="indicator-progress">Please wait...
+											<span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
+									</button>
+									<!--end::Submit button-->
+								</div>
 							</div>
-							<!--end::Wrapper-->
-							<!--begin::Input-->
-							<input class="form-control form-control-lg form-control-solid" type="password" name="password" id="pwd" autocomplete="off" />
-							<!--end::Input-->
 						</div>
-						<!--end::Input group-->
-						<!--begin::Actions-->
-						<div class="text-center">
-							<!--begin::Submit button-->
-							<button type="submit" id="kt_sign_in_submit" class="btn btn-lg btn-primary w-100 mb-5">
-								<span class="indicator-label">Continue</span>
-								<span class="indicator-progress">Please wait...
-									<span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
-							</button>
-							<!--end::Submit button-->
-							<!--begin::Separator-->
-							<div class="text-center text-muted text-uppercase fw-bolder mb-5">or</div>
-							<!--end::Separator-->
-							<!--begin::Google link-->
-							<a href="#" class="btn btn-flex flex-center btn-light btn-lg w-100 mb-5">
-								<img alt="Logo" src="assets/media/svg/brand-logos/google-icon.svg" class="h-20px me-3" />Continue with Google</a>
-							<!--end::Google link-->
-							<!--begin::Google link-->
-							<a href="#" class="btn btn-flex flex-center btn-light btn-lg w-100 mb-5">
-								<img alt="Logo" src="assets/media/svg/brand-logos/facebook-4.svg" class="h-20px me-3" />Continue with Facebook</a>
-							<!--end::Google link-->
-							<!--begin::Google link-->
-							<a href="#" class="btn btn-flex flex-center btn-light btn-lg w-100">
-								<img alt="Logo" src="assets/media/svg/brand-logos/apple-black.svg" class="h-20px me-3" />Continue with Apple</a>
-							<!--end::Google link-->
-						</div>
-						<!--end::Actions-->
-					</form>
-					<!--end::Form-->
-				</div>
-				<!--end::Wrapper-->
+					</div>
+				</form>
 			</div>
-			<!--end::Content-->
-			<?php include_once ('includes/footer.php'); ?>
+			<!--end::Card-->
 		</div>
-		<!--end::Authentication - Sign-in-->
+		<!--end::Container-->
 	</div>
-	<!--end::Root-->
+	<!--end::Post-->
+	</div>
+	<!--end::Content-->
 </body>
 <script>
 	"use strict";
@@ -245,7 +216,7 @@ if (isset($_POST['email'])) {
 			success: function(response) {
 				console.log(response);
 				if (response != '1') {
-					window.location='dashboard.php';
+					window.location = 'dashboard.php';
 				} else {
 					Swal.fire({
 						text: "Invalid Username and Password, please enter valid Username and Password.",

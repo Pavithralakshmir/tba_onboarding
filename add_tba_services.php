@@ -5,7 +5,7 @@ $tba_service_category_sql = "SELECT * FROM `tba_service_category` WHERE `is_acti
 $tba_service_category_result = mysqli_query($conn, $tba_service_category_sql);
 
 $idd = $edit_title = $edit_tba_service_category = $edit_tba_service_type = $edit_description = $edit_price = $edit_price_amt = $edit_remarks = $edit_url = $edit_inst = '';
-
+$id =  $edit_id = $edit_pack_name = $edit_price = $edit_currency = $edit_validity_count = $edit_pack_for = $edit_features = $edit_deliverables = '';
 if (isset($_GET['Tmd3ZFVwaCtxWmNsYU1UODJWaUYxUT09'])) {
     $encrypt_action = $_GET['Tmd3ZFVwaCtxWmNsYU1UODJWaUYxUT09'];
     $action = encrypt_decrypt('decrypt', $encrypt_action);
@@ -61,6 +61,21 @@ if (isset($_POST['cat_id'])) {
     exit;
 }
 
+if (isset($_POST['feature_id'])) {
+    $imp = implode(',',$_POST['feature_id']);
+    $child_sql = "SELECT DISTINCT deliverable,id FROM tba_deliverables WHERE features_id IN (".$imp.")";
+    $tba_service_deliverables_result = mysqli_query($conn, $child_sql);
+    while ($row4 = mysqli_fetch_assoc($tba_service_deliverables_result)) {
+        $tba_service_deliverable_id = $row4['id'];
+        $deliverable = $row4['deliverable'];
+?>
+        <option value=""></option>
+        <option value="<?php echo $tba_service_deliverable_id; ?>"><?php echo $deliverable; ?></option>
+<?php
+    }
+    exit;
+}
+
 $sql = "SELECT * FROM `users` ORDER BY `id` DESC limit 1";
 $result = mysqli_query($conn, $sql);
 $singleRow = mysqli_fetch_row($result);
@@ -75,8 +90,8 @@ if (isset($_POST['title'])) {
     $url = mysqli_real_escape_string($conn, $_POST["url"]);
     $tba_service_category = $_POST['tba_service_category'];
     $tba_service_type = $_POST['tba_service_type'];
-    $cdate = date('Y-m-d H:i:s');
     $post_id = $_POST['post_id'];
+    $cdate = date('Y-m-d H:i:s');
     $cby = $user_details->name;
     $img = $_FILES["file"]["name"];
     $tmp = $_FILES["file"]["tmp_name"];
@@ -147,6 +162,9 @@ if (isset($_POST['title'])) {
     <?php
     include_once 'includes/common_header_links.php';
     ?>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
 </head>
 
 <body id="kt_body" class="header-fixed header-tablet-and-mobile-fixed toolbar-enabled toolbar-fixed aside-enabled aside-fixed" style="--kt-toolbar-height:55px;--kt-toolbar-height-tablet-and-mobile:55px">
@@ -164,41 +182,6 @@ if (isset($_POST['title'])) {
                 ?>
                 <!--begin::Content-->
                 <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
-                    <!--begin::Toolbar-->
-                    <div class="toolbar" id="kt_toolbar">
-                        <!--begin::Container-->
-                        <div id="kt_toolbar_container" class="container-fluid d-flex flex-stack">
-                            <!--begin::Page title-->
-                            <div data-kt-swapper="true" data-kt-swapper-mode="prepend" data-kt-swapper-parent="{default: '#kt_content_container', 'lg': '#kt_toolbar_container'}" class="page-title d-flex align-items-center flex-wrap me-3 mb-5 mb-lg-0">
-                                <!--begin::Title-->
-                                <h1 class="d-flex align-items-center text-dark fw-bolder fs-3 my-1">Add TBA Services</h1>
-                                <!--end::Title-->
-                                <!--begin::Separator-->
-                                <span class="h-20px border-gray-300 border-start mx-4"></span>
-                                <!--end::Separator-->
-                                <!--begin::Breadcrumb-->
-                                <ul class="breadcrumb breadcrumb-separatorless fw-bold fs-7 my-1">
-                                    <!--begin::Item-->
-                                    <li class="breadcrumb-item text-muted">
-                                        <a href="index.php" class="text-muted text-hover-primary">Home</a>
-                                    </li>
-                                    <!--end::Item-->
-                                    <!--begin::Item-->
-                                    <li class="breadcrumb-item">
-                                        <span class="bullet bg-gray-300 w-5px h-2px"></span>
-                                    </li>
-                                    <!--end::Item-->
-                                    <!--begin::Item-->
-                                    <li class="breadcrumb-item text-dark">Add TBA Services</li>
-                                    <!--end::Item-->
-                                </ul>
-                                <!--end::Breadcrumb-->
-                            </div>
-                            <!--end::Page title-->
-                        </div>
-                        <!--end::Container-->
-                    </div>
-                    <!--end::Toolbar-->
                     <!--begin::Post-->
                     <div class="post d-flex flex-column-fluid" id="kt_post">
                         <!--begin::Container-->
@@ -244,7 +227,7 @@ if (isset($_POST['title'])) {
                                             <!--begin::Col-->
                                             <div class="col-md-6 fv-row">
                                                 <!--end::Label-->
-                                                <label class="required fs-5 fw-bold mb-2">TBA Service Type</label>
+                                                <label class="required fs-5 fw-bold mb-2">TBA Service Subcategory</label>
                                                 <!--end::Label-->
                                                 <!--end::Input-->
                                                 <select name="tba_service_type" id="tba_service_type" data-control="select2" data-placeholder="Select a Serivice Type..." class="form-select form-select-solid">
@@ -254,161 +237,286 @@ if (isset($_POST['title'])) {
                                             <!--end::Col-->
                                         </div>
                                         <!--end::Input group-->
-
                                         <!--begin::Input group-->
-                                        <div class="row mb-5">
-                                            <!--begin::Col-->
-                                            <div class="col-md-6 fv-row">
-                                                <!--begin::Label-->
-                                                <label class="required fs-5 fw-bold mb-2">Title</label>
-                                                <!--end::Label-->
-                                                <!--begin::Input-->
-                                                <input type="text" class="form-control form-control-solid" placeholder="" name="title" id="title" value="<?php echo $edit_title; ?>" />
-                                                <!--end::Input-->
-                                            </div>
-                                            <!--end::Col-->
-                                            <!--begin::Col-->
-                                            <div class="col-md-6 fv-row">
-                                                <!--begin::Label-->
-                                                <label class="required fs-5 fw-bold mb-2">Price</label>
-                                                <!--end::Label-->
-                                                <!--begin::Input-->
-                                                <div class="row row-cols-1 row-cols-md-3 row-cols-lg-1 row-cols-xl-3 g-9" data-kt-buttons="true" data-kt-buttons-target="[data-kt-button='true']">
-                                                    <!--begin::Col-->
-                                                    <div class="col">
-                                                        <!--begin::Option-->
-                                                        <label class="btn btn-outline btn-outline-dashed btn-outline-default d-flex text-start p-3" data-kt-button="true">
-                                                            <!--begin::Radio-->
-                                                            <span class="form-check form-check-custom form-check-solid form-check-sm align-items-start mt-1">
-                                                                <input class="form-check-input price" type="radio" name="price" value="1" <?php if ($edit_price == '1') {
-                                                                                                                                                echo "checked";
-                                                                                                                                            } ?>>
-                                                            </span>
-                                                            <!--end::Radio-->
-                                                            <!--begin::Info-->
-                                                            <span class="ms-5">
-                                                                <span class="fs-4 fw-bolder text-gray-800 d-block">Fixed</span>
-                                                            </span>
-                                                            <!--end::Info-->
-                                                        </label>
-                                                        <!--end::Option-->
-                                                    </div>
-                                                    <!--end::Col-->
-                                                    <!--begin::Col-->
-                                                    <div class="col">
-                                                        <!--begin::Option-->
-                                                        <label class="btn btn-outline btn-outline-dashed btn-outline-default d-flex text-start p-3" data-kt-button="true">
-                                                            <!--begin::Radio-->
-                                                            <span class="form-check form-check-custom form-check-solid form-check-sm align-items-start mt-1">
-                                                                <input class="form-check-input price" type="radio" name="price" value="2" <?php if ($edit_price == '2') {
-                                                                                                                                                echo "checked";
-                                                                                                                                            } ?>>
-                                                            </span>
-                                                            <!--end::Radio-->
-                                                            <!--begin::Info-->
-                                                            <span class="ms-5">
-                                                                <span class="fs-4 fw-bolder text-gray-800 d-block">Custom</span>
-                                                            </span>
-                                                            <!--end::Info-->
-                                                        </label>
-                                                        <!--end::Option-->
-                                                    </div>
-                                                    <!--end::Col-->
-                                                    <!--begin::Col-->
-                                                    <div class="col" id="price_div">
-                                                        <!--begin::Input-->
-                                                        <input class="form-control form-control-solid" placeholder="Enter The Doller" name="price_amt" id="price_amt" type="number" min=0 value="<?php echo $edit_price_amt; ?>" style="display=<?php if ($edit_price_amt != 0) {
-                                                                                                                                                                                                                                                    echo 'inline';
-                                                                                                                                                                                                                                                } else {
-                                                                                                                                                                                                                                                    echo 'none';
-                                                                                                                                                                                                                                                } ?>" />
-                                                        <!--end::Input-->
-                                                    </div>
-                                                    <!--end::Col-->
-                                                </div>
-                                                <!--end::Input-->
-                                            </div>
-                                            <!--end::Col-->
+                                        <div id="features_details_div"></div>
+                                        <!--end::Input group-->
+                                        <!--begin::Input group-->
+                                        <div class="fv-row mb-5">
+                                            <!--begin::Label-->
+                                            <label class="required fs-5 fw-bold mb-2">Title</label>
+                                            <!--end::Label-->
+                                            <!--begin::Input-->
+                                            <input type="text" class="form-control form-control-solid" placeholder="" name="title" id="title" value="<?php echo $edit_title; ?>" />
+                                            <!--end::Input-->
                                         </div>
                                         <!--end::Input group-->
                                         <!--begin::Input group-->
-                                        <div class="row mb-5">
-                                            <!--begin::Col-->
-                                            <div class="col-md-12 fv-row">
-                                                <label class="fs-5 fw-bold mb-2">Description</label>
-                                                <!--begin::Input-->
-                                                <textarea class="ckeditor" name="description" id="description"><?php echo htmlspecialchars($edit_description); ?></textarea>
-                                                <!--end::Input-->
-                                            </div>
-                                            <!--end::Col-->
+                                        <div class="fv-row mb-5">
+                                            <label class="fs-5 fw-bold mb-2">Description</label>
+                                            <!--begin::Input-->
+                                            <textarea class="ckeditor" name="description" id="description"><?php echo htmlspecialchars($edit_description); ?></textarea>
+                                            <!--end::Input-->
                                         </div>
                                         <!--end::Input group-->
                                         <!--begin::Input group-->
-                                        <div class="row mb-5">
-
+                                        <div class="fv-row mb-5">
                                             <!--begin::Input group-->
-                                            <div class="col-md-6 fv-row">
-                                                <label class="required fs-5 fw-bold mb-2">Notes</label>
-                                                <textarea class="form-control form-control-solid" rows="5" name="remarks" id="remarks" placeholder=""><?php echo htmlspecialchars($edit_remarks); ?></textarea>
-                                            </div>
+                                            <label class="required fs-5 fw-bold mb-2">Remarks</label>
+                                            <textarea class="form-control form-control-solid" rows="5" name="remarks" id="remarks" placeholder=""><?php echo htmlspecialchars($edit_remarks); ?></textarea>
                                             <!--end::Input group-->
+                                        </div>
+                                        <!--end::Input group-->
+                                        <!--begin::Input group-->
+                                        <div class="fv-row mb-5">
+                                            <!--begin::Label-->
+                                            <label class="required fs-5 fw-bold mb-2">Price Type</label>
+                                            <!--end::Label-->
+                                            <!--begin::Input-->
+                                            <div class="row row-cols-1 row-cols-md-3 row-cols-lg-1 row-cols-xl-3 g-9" data-kt-buttons="true" data-kt-buttons-target="[data-kt-button='true']">
+                                                <!--begin::Col-->
+                                                <div class="col">
+                                                    <!--begin::Option-->
+                                                    <label class="btn btn-outline btn-outline-dashed btn-outline-default d-flex text-start p-3" data-kt-button="true">
+                                                        <!--begin::Radio-->
+                                                        <span class="form-check form-check-custom form-check-solid form-check-sm align-items-start mt-1">
+                                                            <input class="form-check-input price" type="radio" name="price" value="1" <?php if ($edit_price == '1') {
+                                                                                                                                            echo "checked";
+                                                                                                                                        } else if ($edit_price == '') {
+                                                                                                                                            echo "checked";
+                                                                                                                                        } ?>>
+                                                        </span>
+                                                        <!--end::Radio-->
+                                                        <!--begin::Info-->
+                                                        <span class="ms-5">
+                                                            <span class="fs-4 fw-bolder text-gray-800 d-block">Fixed</span>
+                                                        </span>
+                                                        <!--end::Info-->
+                                                    </label>
+                                                    <!--end::Option-->
+                                                </div>
+                                                <!--end::Col-->
+                                                <!--begin::Col-->
+                                                <div class="col">
+                                                    <!--begin::Option-->
+                                                    <label class="btn btn-outline btn-outline-dashed btn-outline-default d-flex text-start p-3" data-kt-button="true">
+                                                        <!--begin::Radio-->
+                                                        <span class="form-check form-check-custom form-check-solid form-check-sm align-items-start mt-1">
+                                                            <input class="form-check-input price" type="radio" name="price" value="3" <?php if ($edit_price == '3') {
+                                                                                                                                            echo "checked";
+                                                                                                                                        } ?>>
+                                                        </span>
+                                                        <!--end::Radio-->
+                                                        <!--begin::Info-->
+                                                        <span class="ms-5">
+                                                            <span class="fs-4 fw-bolder text-gray-800 d-block">Pack</span>
+                                                        </span>
+                                                        <!--end::Info-->
+                                                    </label>
+                                                    <!--end::Option-->
+                                                </div>
+                                                <!--end::Col-->
+                                                <!--begin::Col-->
+                                                <div class="col">
+                                                    <!--begin::Option-->
+                                                    <label class="btn btn-outline btn-outline-dashed btn-outline-default d-flex text-start p-3" data-kt-button="true">
+                                                        <!--begin::Radio-->
+                                                        <span class="form-check form-check-custom form-check-solid form-check-sm align-items-start mt-1">
+                                                            <input class="form-check-input price" type="radio" name="price" value="2" <?php if ($edit_price == '2') {
+                                                                                                                                            echo "checked";
+                                                                                                                                        } ?>>
+                                                        </span>
+                                                        <!--end::Radio-->
+                                                        <!--begin::Info-->
+                                                        <span class="ms-5">
+                                                            <span class="fs-4 fw-bolder text-gray-800 d-block">Custom</span>
+                                                        </span>
+                                                        <!--end::Info-->
+                                                    </label>
+                                                    <!--end::Option-->
+                                                </div>
+                                                <!--end::Col-->
+                                            </div>
+                                            <!--end::Input-->
+                                        </div>
+                                        <!--end::Input group-->
+
+                                        <div class="fv-row mb-7 new_task" id="price_div">
+                                            <!--begin::Label-->
+                                            <label class="required fs-5 fw-bold mb-2">Price & Validity Details</label>
+                                            <!--end::Label-->
+                                            <div class="task_append p-4" id="task_append1" style="border-style: dotted;">
+                                                <!--begin::Input group-->
+                                                <div class="row mb-7 pack_name_div">
+                                                    <!--begin::Col-->
+                                                    <div class="col-md-6 fv-row">
+                                                        <!--begin::Label-->
+                                                        <label class="required fs-6 fw-bold mb-2">Pack Name</label>
+                                                        <!--end::Label-->
+                                                        <!--begin::Input-->
+                                                        <input type="text" class="form-control form-control-solid pack_name" id="pack_name_1" placeholder="" name="pack_name[]" value="<?php echo $edit_pack_name; ?>" />
+                                                        <!--end::Input-->
+                                                    </div>
+                                                    <!--end::Col-->
+                                                    <!--begin::Col-->
+                                                    <div class="col-md-6 mt-9 fv-row">
+                                                        <div class="remove float-end" id="fieldclose">
+                                                            <button class="btn btn-outline-danger py-2 remove_field" type="button"><i class="fas fa-minus-circle add_icon"></i> Remove</button>
+                                                        </div>
+                                                    </div>
+                                                    <!--end::Col-->
+                                                </div>
+                                                <!--end::Input group-->
+                                                <!--begin::Input group-->
+                                                <div class="row mb-7">
+                                                    <!--begin::Col-->
+                                                    <div class="col-md-6 fv-row">
+                                                        <!--begin::Label-->
+                                                        <label class="required fs-5 fw-bold mb-2">Pack Currency Details</label>
+                                                        <!--end::Label-->
+                                                        <!--begin::Input-->
+                                                        <div class="row">
+                                                            <!--begin::Col-->
+                                                            <div class="col-md-6 fv-row">
+                                                                <select name="currency[]" id="currency_1" data-control="select2" data-placeholder="Currency Code" class="form-control form-select form-select-solid select2-list currency select_dd">
+                                                                    <option value="USD" <?php echo ($edit_currency == 'USD') ? 'selected' : ''; ?>>$ - USD</option>
+                                                                    <option value="AUD" <?php echo ($edit_currency == 'AUD') ? 'selected' : ''; ?>>$ - AUD</option>
+                                                                    <option value="CNY" <?php echo ($edit_currency == 'CNY') ? 'selected' : ''; ?>>¥ - CNY</option>
+                                                                    <option value="CRC" <?php echo ($edit_currency == 'CRC') ? 'selected' : ''; ?>>₡ - CRC</option>
+                                                                    <option value="EUR" <?php echo ($edit_currency == 'EUR') ? 'selected' : ''; ?>>€ - EUR</option>
+                                                                    <option value="INR" <?php echo ($edit_currency == 'INR') ? 'selected' : ''; ?>>₹ - INR</option>
+                                                                </select>
+                                                            </div>
+                                                            <!--end::Col-->
+                                                            <!--begin::Col-->
+                                                            <div class="col-md-6 fv-row">
+                                                                <input type="text" class="form-control form-control-solid price" placeholder="Price" name="price[]" id="Price_1" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'');javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" maxlength="10" autocomplete="off" value="<?php echo $edit_price; ?>" />
+                                                            </div>
+                                                            <!--end::Col-->
+                                                        </div>
+                                                        <!--end::Input-->
+                                                    </div>
+                                                    <!--end::Col-->
+                                                    <!--begin::Col-->
+                                                    <div class="col-md-6 fv-row">
+                                                        <!--begin::Label-->
+                                                        <label class="required fs-5 fw-bold mb-2">Pack validity Details</label>
+                                                        <!--end::Label-->
+                                                        <!--begin::Input-->
+                                                        <div class="row">
+                                                            <!--begin::Col-->
+                                                            <div class="col-md-6 fv-row">
+                                                                <input type="text" class="form-control form-control-solid validity_count" placeholder="Validity Count" name="validity_count[]" id="validity_count_1" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'');javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" maxlength="10" autocomplete="off" value="<?php echo $edit_validity_count; ?>" />
+                                                            </div>
+                                                            <!--end::Col-->
+                                                            <!--begin::Col-->
+                                                            <div class="col-md-6 fv-row">
+                                                                <select name="pack_for[]" id="pack_for_1" placeholder="Pack For" class="form-select form-select-solid">
+                                                                    <option value="">Pack For</option>
+                                                                    <option value="day" <?php echo ($edit_pack_for == 'day') ? 'selected' : ''; ?>>Days</option>
+                                                                    <option value="month" <?php echo ($edit_pack_for == 'month') ? 'selected' : ''; ?>>Month(s)</option>
+                                                                    <option value="year" <?php echo ($edit_pack_for == 'year') ? 'selected' : ''; ?>>Year(s)</option>
+                                                                </select>
+                                                            </div>
+                                                            <!--end::Col-->
+                                                        </div>
+                                                        <!--end::Input-->
+                                                    </div>
+                                                    <!--end::Col-->
+                                                </div>
+                                                <!--end::Input group-->
+                                                <!--begin::Input group-->
+                                                <div class="row mb-7">
+                                                    <!--begin::Col-->
+                                                    <div class="col-md-6 fv-row">
+                                                        <!--begin::Label-->
+                                                        <label class="required fs-6 fw-bold mb-2">Features</label>
+                                                        <!--end::Label-->
+                                                        <select name="select_features[]" class="form-select form-select-solid select2-list select_dd select_features" multiple>
+                                                            <?php
+                                                            $features_sql = "SELECT * FROM `tba_features` WHERE `is_delete` = '0'";
+                                                            $features_result = mysqli_query($conn, $features_sql);
+                                                            while ($row = mysqli_fetch_assoc($features_result)) { ?>
+                                                                <option value="<?php echo $row['id']; ?>" <?php if ($row['id'] == $edit_features) {
+                                                                                                                echo "selected";
+                                                                                                            } ?>>
+                                                                    <?php echo $row['features']; ?>
+                                                                </option>
+                                                            <?php } ?>
+                                                        </select>
+                                                    </div>
+                                                    <!--end::Col-->
+                                                    <!--begin::Col-->
+                                                    <div class="col-md-6 fv-row">
+                                                        <!--begin::Label-->
+                                                        <label class="required fs-6 fw-bold mb-2">Deliverables</label>
+                                                        <!--end::Label-->
+                                                        <select name="select_deliverables[]" data-control="select2" data-placeholder="Select a Deliverables..." class="form-select form-select-solid select2-list selectdeliverables select_dd" multiple>
+                                                         
+                                                        </select>
+                                                    </div>
+                                                    <!--end::Col-->
+                                                </div>
+                                                <!--end::Input group-->
+                                            </div>
+                                            <!--end::Input-->
+                                        </div>
+                                        <div class="row float-end">
+                                            <button class="btn btn-primary py-2 add_field_button" type="button" name="new"><i class="fas fa-plus add_icon"></i> Add New Pack</button>
+                                        </div>
+                                        <!--begin::Input group-->
+                                        <div class="row mt-5 mb-5">
                                             <!--begin::Col-->
                                             <div class="col-md-6 fv-row">
-                                                <div class="row mb-5">
-
-                                                    <div class="col-md-6 fv-row">
-                                                        <!--begin::Label-->
-                                                        <label class="required fs-5 fw-bold mb-2">URL</label>
-                                                        <!--end::Label-->
-                                                        <!--begin::Input-->
-                                                        <input type="url" class="form-control form-control-solid" placeholder="" name="url" id="url" value="<?php echo  $edit_url; ?>" />
-                                                        <!--end::Input-->
-                                                    </div>
-                                                    <div class="col-md-6 fv-row">
-                                                        <!--begin::Label-->
-                                                        <label class="required fs-6 fw-bold mb-5">
-                                                            <span>Update Thumbnail Image</span>
-                                                            <i class="fas fa-exclamation-circle ms-1 fs-7" data-bs-toggle="tooltip" title="Allowed file types: png, jpg, jpeg."></i>
+                                                <!--begin::Label-->
+                                                <label class="fs-5 fw-bold mb-2">URL</label>
+                                                <!--end::Label-->
+                                                <!--begin::Input-->
+                                                <input type="url" class="form-control form-control-solid" placeholder="" name="url" id="url" value="<?php echo  $edit_url; ?>" />
+                                                <!--end::Input-->
+                                            </div>
+                                            <div class="col-md-6 fv-row">
+                                                <!--begin::Label-->
+                                                <label class="required fs-6 fw-bold mb-5">
+                                                    <span>Update Thumbnail Image</span>
+                                                    <i class="fas fa-exclamation-circle ms-1 fs-7" data-bs-toggle="tooltip" title="Allowed file types: png, jpg, jpeg."></i>
+                                                </label>
+                                                <!--end::Label-->
+                                                <!--begin::Input-->
+                                                <!--begin::Image input wrapper-->
+                                                <div class="mt-1">
+                                                    <!--begin::Image input-->
+                                                    <div class="image-input image-input-outline" data-kt-image-input="true" style="background-image: url('assets/media/svg/avatars/blank.svg')">
+                                                        <!--begin::Preview existing avatar-->
+                                                        <div class="image-input-wrapper w-100px h-100px" style="background-image: <?php if ($edit_inst) {
+                                                                                                                                        echo "url('" . $edit_inst . "')";
+                                                                                                                                    } else {
+                                                                                                                                        echo "url('assets/media/svg/avatars/blank.svg')";
+                                                                                                                                    } ?> "></div>
+                                                        <!--end::Preview existing avatar-->
+                                                        <!--begin::Edit-->
+                                                        <label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="change" data-bs-toggle="tooltip" title="Change avatar">
+                                                            <i class="bi bi-pencil-fill fs-7"></i>
+                                                            <!--begin::Inputs-->
+                                                            <input type="file" name="inst" accept=".png, .jpg, .jpeg" id="inst" value="<?php echo $edit_inst; ?>" />
+                                                            <!-- <input type="hidden" name="inst" /> -->
+                                                            <!--end::Inputs-->
                                                         </label>
-                                                        <!--end::Label-->
-                                                        <!--begin::Input-->
-                                                        <!--begin::Image input wrapper-->
-                                                        <div class="mt-1">
-                                                            <!--begin::Image input-->
-                                                            <div class="image-input image-input-outline" data-kt-image-input="true" style="background-image: url('assets/media/svg/avatars/blank.svg')">
-                                                                <!--begin::Preview existing avatar-->
-                                                                <div class="image-input-wrapper w-100px h-100px" style="background-image: <?php if ($edit_inst) {
-                                                                                                                                                echo "url('" . $edit_inst . "')";
-                                                                                                                                            } else {
-                                                                                                                                                echo "url('assets/media/svg/avatars/blank.svg')";
-                                                                                                                                            } ?> "></div>
-                                                                <!--end::Preview existing avatar-->
-                                                                <!--begin::Edit-->
-                                                                <label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="change" data-bs-toggle="tooltip" title="Change avatar">
-                                                                    <i class="bi bi-pencil-fill fs-7"></i>
-                                                                    <!--begin::Inputs-->
-                                                                    <input type="file" name="inst" accept=".png, .jpg, .jpeg" id="inst" value="<?php echo $edit_inst; ?>" />
-                                                                    <!-- <input type="hidden" name="inst" /> -->
-                                                                    <!--end::Inputs-->
-                                                                </label>
-                                                                <!--end::Edit-->
-                                                                <!--begin::Cancel-->
-                                                                <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="cancel" data-bs-toggle="tooltip" title="Cancel avatar">
-                                                                    <i class="bi bi-x fs-2"></i>
-                                                                </span>
-                                                                <!--end::Cancel-->
-                                                                <!--begin::Remove-->
-                                                                <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="remove" data-bs-toggle="tooltip" title="Remove avatar">
-                                                                    <i class="bi bi-x-circle fs-2"></i>
-                                                                </span>
-                                                                <!--end::Remove-->
-                                                            </div>
-                                                            <!--end::Image input-->
-                                                        </div>
-                                                        <!--end::Image input wrapper-->
-                                                        <!--end::Input-->
+                                                        <!--end::Edit-->
+                                                        <!--begin::Cancel-->
+                                                        <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="cancel" data-bs-toggle="tooltip" title="Cancel avatar">
+                                                            <i class="bi bi-x fs-2"></i>
+                                                        </span>
+                                                        <!--end::Cancel-->
+                                                        <!--begin::Remove-->
+                                                        <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="remove" data-bs-toggle="tooltip" title="Remove avatar">
+                                                            <i class="bi bi-x-circle fs-2"></i>
+                                                        </span>
+                                                        <!--end::Remove-->
                                                     </div>
+                                                    <!--end::Image input-->
                                                 </div>
+                                                <!--end::Image input wrapper-->
+                                                <!--end::Input-->
                                             </div>
                                             <!--end::Col-->
                                         </div>
@@ -451,6 +559,14 @@ if (isset($_POST['title'])) {
 <script>
     $(document).ready(function() {
         getcattype();
+        getradiovalue();
+        $(".select2-list").select2();
+        $('.select2-list').select2({
+            width: '100%',
+            placeholder: "Select an Option",
+            allowClear: true,
+            tags: true
+        });
         var t, e, i;
         i = document.querySelector("#add_new_tba_serveice");
         t = document.getElementById("add_new_tba_serveice_submit_button");
@@ -465,7 +581,7 @@ if (isset($_POST['title'])) {
                     tba_service_type: {
                         validators: {
                             notEmpty: {
-                                message: "TBA Service Type is required"
+                                message: "TBA Service sub category is required"
                             }
                         }
                     },
@@ -511,13 +627,6 @@ if (isset($_POST['title'])) {
                             }
                         }
                     },
-                    url: {
-                        validators: {
-                            notEmpty: {
-                                message: "Valid URL is required"
-                            }
-                        }
-                    },
                 },
                 plugins: {
                     trigger: new FormValidation.plugins.Trigger(),
@@ -554,7 +663,11 @@ if (isset($_POST['title'])) {
         $("#tba_service_category").on('change', function() {
             getcattype();
         });
-        // $("#price_div").hide();
+        $(".select_features").change(function(event) {
+            var id_name = $(this).val();
+            getdeliverables(id_name);
+        });
+        remove_option_show();
         $(".price").on('change', function() {
             getradiovalue();
         });
@@ -565,6 +678,14 @@ if (isset($_POST['title'])) {
     function getradiovalue() {
         var radioValue = $("input[name='price']:checked").val();
         if (radioValue == '1') {
+            $("#price_div").show();
+            $(".add_field_button").hide();
+            $(".pack_name_div").hide();
+            $(".pack_name").val("-");
+        } else if (radioValue == '3') {
+            $(".pack_name_div").show();
+            $(".pack_name").val("");
+            $(".add_field_button").show();
             $("#price_div").show();
         } else if (radioValue.value == '2') {
             $("#price_div").hide();
@@ -600,6 +721,11 @@ if (isset($_POST['title'])) {
         var remarks = $("#remarks").val();
         var tba_service_category = $("#tba_service_category").val();
         var tba_service_type = $("#tba_service_type").val();
+        var pack_name = $(".pack_name").val();
+        var currency = $(".currency").val();
+        var price = $(".price").val();
+        var select_features = $(".select_features").val();
+        var select_deliverables = $(".select_deliverables").val();
         var form_data = new FormData();
         form_data.append('file', document.getElementById("inst").files[0]);
         form_data.append('title', title);
@@ -620,13 +746,87 @@ if (isset($_POST['title'])) {
             processData: false,
             success: function(response) {
                 // console.log(response);
-                window.location = 'list_tba_service.php';
+                // window.location = 'list_tba_service.php';
             },
             error: function() {
                 alert('Error occurs!');
             }
         });
     }
+
+    function  getdeliverables(id_name){
+        var feature_id = id_name;
+        $.post('add_tba_services.php', {
+            feature_id: feature_id,
+            },
+            function(data, status) {
+                $(".selectdeliverables").html(data);
+            });
+    }
+
+    function remove_option_show() {
+        removeItems = $('.task_append').length;
+        if (removeItems > 1) {
+            $('.remove').show();
+        } else {
+            $('.remove').hide();
+        }
+    }
+
+    function checkdub() {
+        $('.divc').remove();
+        $.each($('.task_append'), function(index1, item1) {
+            var iss = $(this);
+            var count = 0;
+            var select_project = $(this).find(".select1").val();
+            var input_task = $.trim($(this).find(".pack_name").val());
+            var con_pro_task = select_project + input_task.toString().toLowerCase();
+            console.log('firsteach :' + con_pro_task);
+            $.each($('.task_append').not(iss), function(index2, item2) {
+                count = $('.divc').size();
+                var select_project1 = $(this).find(".select1").val();
+                var input_task1 = $.trim($(this).find(".task").val());
+                var con_pro_task1 = select_project1 + input_task1.toString().toLowerCase();
+                if (input_task !== '' && input_task1 !== '') {
+                    if (con_pro_task == con_pro_task1) {
+                        console.log('secound:' + con_pro_task1);
+                        if (count > 2) {
+                            $(this).find('.pack_name').parent().find(".divc").remove();
+                        }
+                        $(this).find(".pack_name").parent().append('<span style="color:red" class="divc"> Task Name  Exist </span> ');
+                    }
+                }
+            });
+        });
+    }
 </script>
 
+<script>
+    $(document).on('click', ".add_field_button", function() {
+        $("#fieldclose").show();
+        $('.task_append:last').clone().find("select").val("").end().find("input:text").val("").end().find('span').text(' ').end().appendTo('.new_task:last').find('.temp').remove();
+        var id = $(".task_append:last").prop("id").replace("task_append", "");
+        var id1 = parseInt(id) + 1; // Declare new id ++1
+        var final = $(".task_append:last").attr('id', "task_append" + id1); // added id
+        var id2 = $(".select2-list:last").prop("id").replace("select_features", "");
+        var id3 = parseInt(id2) + 1; // Declare new id ++1
+        // var final1 = $(".select_features:last").attr('id', "select_features" + id3); // added id
+        // $('#select_features'+ id3).removeClass('select2-hidden-accessible');
+        $('.select2-list').removeClass('select2-hidden-accessible');
+        $('.select2-list').select2();
+        var last = $(final).attr('id');
+        remove_option_show();
+    });
+
+    $(document).on("click", "#fieldclose", function(e) {
+        e.preventDefault();
+        var n = $(this).parent('div').parent('div').parent('div').remove();
+        remove_option_show();
+        checkdub();
+    });
+
+    $(document).on('blur keyup ', '.pack_name', function() {
+        checkdub();
+    });
+</script>
 </html>

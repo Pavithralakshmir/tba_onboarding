@@ -25,32 +25,37 @@ $sql = "SELECT `name` FROM `usergroup` where `id`='$ugroup'";
 $sql_result = mysqli_query($conn, $sql);
 $user_role_name = mysqli_fetch_object($sql_result);
 
-$user_details = "SELECT `name`,`pemail`,`mobile1`,`mobile2`,`address1`,`ecode`,`inst` FROM `users` where `id`='$session_id'";
+$user_details = "SELECT `name`,`fhname`,`pemail`,`mobile1`,`mobile2`,`address1`,`address2`,`username`,`pincode`,`city`,`ecode`,`inst`, `kyc_doc_1`, `kyc_doc_2`, `kyc_doc_3`, `kyc_doc_4`, `foldername`, `dg_sign_1`, `dg_sign_2`, `dg_sign_3`, `dg_sign_4`, `up_img_sign_1`, `up_img_sign_2`, `up_img_sign_3`, `up_img_sign_4` FROM `users` where `id`='$session_id'";
 $user_result = mysqli_query($conn, $user_details);
 $user_details = mysqli_fetch_object($user_result);
 // print_r($_SESSION);exit;
 $ch2 = "SELECT `id`,`category` FROM `tba_service_category`";
 $de2 = mysqli_query($conn, $ch2);
 while ($data2 = mysqli_fetch_assoc($de2)) {
-	$category_name[$data2['id']] = $data2['category'];
+    $category_name[$data2['id']] = $data2['category'];
 }
 $ch3 = "SELECT `id`,`type` FROM `tba_service_type`";
 $de3 = mysqli_query($conn, $ch3);
 while ($data3 = mysqli_fetch_assoc($de3)) {
-	$type_name[$data3['id']] = $data3['type'];
+    $type_name[$data3['id']] = $data3['type'];
 }
 
 $ch4 = "SELECT `id`, `sender_id`, `sender_msg`, `sent_at`, `replay_by`, `replay_msg`, `replay_at` FROM `chat_bot` WHERE `sender_id`='$session_id' ORDER BY `sent_at` ASC";
 $de4 = mysqli_query($conn, $ch4);
 
-$ch5 = "SELECT `id`,`name`,`pemail` FROM `users`";
+$ch5 = "SELECT `id`,`name`,`pemail`,`mobile1` FROM `users`";
 $de5 = mysqli_query($conn, $ch5);
 while ($data5 = mysqli_fetch_assoc($de5)) {
-	$users_name[$data5['id']] = $data5['name'];
-	$loginmail[$data5['id']] = $data5['pemail'];
+    $users_name[$data5['id']] = $data5['name'];
+    $loginmail[$data5['id']] = $data5['pemail'];
+    $loginmobile[$data5['id']] = $data5['mobile1'];
 }
-
-if(isset($_POST['sender_msg'])){
+$ch6 = "SELECT `id`,`features` FROM `tba_features`";
+$de6 = mysqli_query($conn, $ch6);
+while ($data6 = mysqli_fetch_assoc($de6)) {
+    $features_name[$data6['id']] = $data6['features'];
+}
+if (isset($_POST['sender_msg'])) {
     $sender_msg = $_POST['sender_msg'];
     $sender_id = $_POST['sender_id'];
     $sql6 = "INSERT INTO `chat_bot`(`sender_id`, `sender_msg`, `sent_at`,`sent_ip`) VALUES ('$sender_id','$sender_msg','$datetime','$_SERVER[REMOTE_ADDR]')";

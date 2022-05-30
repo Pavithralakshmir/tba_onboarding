@@ -1,31 +1,34 @@
 <?php
 include_once 'includes/php/common_php.php';
 
-$edit_category = $id =  $idd = '';
+$edit_team_name = $edit_team_member = $id =  $idd = '';
+$edit_team_member = array();
+
 if (isset($_GET['Tmd3ZFVwaCtxWmNsYU1UODJWaUYxUT09'])) {
     $encrypt_action = $_GET['Tmd3ZFVwaCtxWmNsYU1UODJWaUYxUT09'];
     $action = encrypt_decrypt('decrypt', $encrypt_action);
     $encrypt_id = $_GET['WnAyV3FOdHJ3dkNiMEgrMGxVcytZUT09'];
     $id = encrypt_decrypt('decrypt', $encrypt_id);
     if ($action == 'edit') {
-        $sql = "SELECT `id`, `category` FROM `tba_service_category` WHERE `id` ='$id' ";
+        $sql = "SELECT `id`, `team_name`,`team_members` FROM `team` WHERE `id` ='$id' ";
         $result = mysqli_query($conn, $sql);
         while ($row = mysqli_fetch_assoc($result)) {
             $idd = $row['id'];
-            $edit_category = $row['category'];
+            $edit_team_name = $row['team_name'];
+            $edit_team_member = explode(",", $row['team_members']);
         }
     } else if ($action == 'deactive') {
-        $sql = "UPDATE `tba_service_category` SET `is_active` = '1' where id='$id'";
+        $sql = "UPDATE `team` SET `is_active` = '1' where id='$id'";
         $result = mysqli_query($conn, $sql);
-        header("Location: add_tba_service_category.php?msg=3");
+        header("Location: add_m_team.php?msg=3");
     } else if ($action == 'active') {
-        $sql = "UPDATE `tba_service_category` SET `is_active` = '0' where id='$id'";
+        $sql = "UPDATE `team` SET `is_active` = '0' where id='$id'";
         $result = mysqli_query($conn, $sql);
-        header("Location: add_tba_service_category.php?msg=3");
+        header("Location: add_m_team.php?msg=3");
     } else if ($action == 'delete') {
-        $sql = "UPDATE `tba_service_category` SET `is_delete` = '1' where id='$id'";
+        $sql = "UPDATE `team` SET `is_delete` = '1' where id='$id'";
         $result = mysqli_query($conn, $sql);
-        header("Location: add_tba_service_category.php?msg=4");
+        header("Location: add_m_team.php?msg=4");
     }
 }
 
@@ -33,31 +36,36 @@ if (isset($_POST['order'])) {
     $id_array = $_POST['order'];
     foreach ($id_array as $key => $value) {
         if ($value) {
-            $sql = "UPDATE `tba_service_category` SET `position`='$key' where id='$value'";
+            $sql = "UPDATE `team` SET `position`='$key' where id='$value'";
             $result = mysqli_query($conn, $sql);
         }
     }
     exit;
 }
 
-if (isset($_POST['category'])) {
-    $category = mysqli_real_escape_string($conn, $_POST["category"]);
+if (isset($_POST['team_name'])) {
+    $team_name = mysqli_real_escape_string($conn, $_POST["team_name"]);
+    $team_member = mysqli_real_escape_string($conn, $_POST["team_member"]);
+    $id = $_POST["id"];
+    $cdate = date('Y-m-d H:i:s');
+    $cby = $user_details->name;
     $id = $_POST["id"];
     if ($id) {
-        $sql6 = "UPDATE `tba_service_category` SET `category`= '$category' WHERE id='$id'";
+        $sql6 = "UPDATE `team` SET `team_name`= '$team_name',`team_members`= '$team_member',`mdate`='$cdate',`mby`='$cby',`mip`='$_SERVER[REMOTE_ADDR]' WHERE id='$id'";
         $res6 = mysqli_query($conn, $sql6);
-        header("Location: add_tba_service_category.php");
+        header("Location: add_m_team.php");
     } else {
-        $sql5 = "SELECT * FROM `tba_service_category` where `category` = '$category'";
+        $sql5 = "SELECT * FROM `team` where `team_name` = '$team_name'";
         $res5 = mysqli_query($conn, $sql5);
         if (mysqli_num_rows($res5)) {
             $msg = 1;
         } else {
-            $sql6 = "INSERT INTO `tba_service_category`(`category`) VALUES ('$category')";
+            $sql6 = "INSERT INTO `team`(`team_name`,`team_members`) VALUES ('$team_name','$team_member','$cdate','$cby','$_SERVER[REMOTE_ADDR]')";
             $res6 = mysqli_query($conn, $sql6);
-            header("Location: add_tba_service_category.php");
+            header("Location: add_m_team.php");
         }
     }
+    exit;
 }
 ?>
 
@@ -78,6 +86,26 @@ if (isset($_POST['category'])) {
     <?php
     include_once 'includes/common_header_links.php';
     ?>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
+
+    <link rel="stylesheet" href="http://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css">
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script> -->
+    <script src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"> </script>
+    <script>
+        $(document).ready(function() {
+            $(".select2-list").select2();
+            $('.select2-list').select2({
+                width: '100%',
+                placeholder: "Select an Option",
+                allowClear: true,
+                tags: true,
+            });
+            $('#kt_customers_table').DataTable();
+        });
+    </script>
 </head>
 
 <body id="kt_body" class="header-fixed header-tablet-and-mobile-fixed toolbar-enabled toolbar-fixed aside-enabled aside-fixed" style="--kt-toolbar-height:55px;--kt-toolbar-height-tablet-and-mobile:55px">
@@ -100,41 +128,69 @@ if (isset($_POST['category'])) {
                         <!--begin::Container-->
                         <div id="kt_content_container" class="container-xxl">
                             <!--begin::Card-->
-                            <div class="card  p-4">
+                            <div class="card">
                                 <!--begin::Card header-->
-                                <!--begin::Title-->
-                                <h3 class="fs-1hx text-dark p-2">Create Service Category</h3>
-                                <!--end::Title-->
+                                <div class="text-center">
+                                    <!--begin::Title-->
+                                    <h3 class="fs-2hx text-dark mt-8">Add TBA Service team Form</h3>
+                                    <!--end::Title-->
+                                </div>
                                 <!--end::Card header-->
                                 <!--begin::Card body-->
-                                <div class="card-body p-0 m-2">
+                                <div class="card-body pt-0">
                                     <!--begin::Form-->
-                                    <form class="form" role="form" method="POST" enctype="multipart/form-data" id="add_new_category">
+                                    <form class="form mb-15" role="form" method="POST" enctype="multipart/form-data" id="add_new_team">
                                         <input id="edit_id" type="hidden" value="<?php echo $idd ?>" />
                                         <!--begin::Input group-->
                                         <div class="row mb-5">
                                             <!--begin::Col-->
-                                            <div class="col-md-6 fv-row">
+                                            <div class="col-md-4 fv-row">
                                                 <!--begin::Label-->
-                                                <label class="required fs-5 fw-bold mb-2">Service Category</label>
+                                                <label class="required fs-5 fw-bold mb-2">Team Name</label>
                                                 <!--end::Label-->
                                                 <!--begin::Input-->
-                                                <input type="text" class="form-control form-control-solid" placeholder="" name="category" id="category" value="<?php echo $edit_category; ?>" />
+                                                <input type="text" class="form-control form-control-solid" placeholder="Team Name Here" name="team_name" id="team_name" value="<?php echo $edit_team_name; ?>" />
                                                 <!--end::Input-->
                                             </div>
                                             <!--end::Col-->
                                             <!--begin::Col-->
-                                            <div class="col-md-6 fv-row">
+                                            <div class="col-md-4 fv-row">
+                                                <!--begin::Label-->
+                                                <label class="required fs-5 fw-bold mb-2">Add team member</label>
+                                                <!--end::Label-->
+                                                <!--begin::Input-->
+                                                <select name="team_member[]" id="team_member" class="form-select form-select-solid select2-list select_dd towhom" multiple aria-readonly="true">
+                                                    <option value=""></option>
+                                                    <?php
+                                                    $sql = "select * from users";
+                                                    $querys = mysqli_query($conn, $sql);
+                                                    while ($rows = mysqli_fetch_assoc($querys)) {
+                                                    ?>
+                                                        <option value="<?php echo $rows['id']; ?>" <?php
+                                                                                                    if (in_array($rows['id'], $edit_team_member)) {
+                                                                                                        echo "selected";
+                                                                                                    }
+                                                                                                    ?>>
+                                                            <?php echo $rows['name'] . "-" . $rows['mobile1'] . "-" . $rows['pemail']; ?></option>
+                                                    <?php } ?>
+                                                </select>
+                                                <!--end::Input-->
+                                            </div>
+                                            <!--end::Col-->
+                                            <!--begin::Col-->
+                                            <div class="col-md-4 fv-row">
                                                 <div class="text-center pt-8">
                                                     <!--begin::Submit-->
-                                                    <button type="reset" class="btn btn-light btn-active-light-primary me-2">
+                                                    <a href="add_m_team.php">
+                                                        <button type="button" class="btn btn-warning">
+                                                            <!--begin::Indicator-->
+                                                            <span class="indicator-label">Cancle</span>
+                                                            <!--end::Indicator-->
+                                                        </button>
+                                                    </a>
+                                                    <button type="submit" class="btn btn-success" id="add_new_team_submit_button" name="add_new_team_submit">
                                                         <!--begin::Indicator-->
-                                                        <span class="indicator-label"><img src="assets/media/icons/clear_icon_1.png"> Clear Field</span>
-                                                        <!--end::Indicator-->
-                                                    </button>
-                                                    <button type="submit" class="btn btn-primary" id="add_new_category_submit_button" name="add_new_category_submit">
-                                                        <!--begin::Indicator-->
-                                                        <span class="indicator-label">Create Category</span>
+                                                        <span class="indicator-label">Save Now</span>
                                                         <span class="indicator-progress">Please wait...
                                                             <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
                                                         <!--end::Indicator-->
@@ -154,20 +210,27 @@ if (isset($_POST['category'])) {
                             <br>
                             <!--begin::Card-->
                             <div class="card">
+                                <!--begin::Card header-->
+                                <div class="text-center">
+                                    <!--begin::Title-->
+                                    <h3 class="fs-2hx text-dark mt-8">Edit And Delete TBA Service team</h3>
+                                    <!--end::Title-->
+                                </div>
+                                <!--end::Card header-->
                                 <!--begin::Card body-->
-                                <div class="card-body">
+                                <div class="card-body pt-0">
                                     <!--begin::Search-->
-                                    <div class="d-flex align-items-center position-relative my-1 fv-row">
+                                    <!-- <div class="d-flex align-items-center position-relative my-1 col-md-4 fv-row"> -->
                                         <!--begin::Svg Icon | path: icons/duotune/general/gen021.svg-->
-                                        <span class="svg-icon svg-icon-1 position-absolute ms-6">
+                                        <!-- <span class="svg-icon svg-icon-1 position-absolute ms-6">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                                                 <rect opacity="0.5" x="17.0365" y="15.1223" width="8.15546" height="2" rx="1" transform="rotate(45 17.0365 15.1223)" fill="black" />
                                                 <path d="M11 19C6.55556 19 3 15.4444 3 11C3 6.55556 6.55556 3 11 3C15.4444 3 19 6.55556 19 11C19 15.4444 15.4444 19 11 19ZM11 5C7.53333 5 5 7.53333 5 11C5 14.4667 7.53333 17 11 17C14.4667 17 17 14.4667 17 11C17 7.53333 14.4667 5 11 5Z" fill="black" />
-                                            </svg>
-                                        </span>
+                                            </svg> -->
+                                        <!-- </span> -->
                                         <!--end::Svg Icon-->
-                                        <input type="text" data-kt-customer-table-filter="search" class="form-control form-control-solid ps-15" placeholder="Search Here" />
-                                    </div>
+                                        <!-- <input type="text" data-kt-customer-table-filter="search" class="form-control form-control-solid ps-15" placeholder="Search Here" />
+                                    </div> -->
                                     <!--end::Search-->
                                     <!--begin::Table-->
                                     <table class="table align-middle table-row-dashed fs-6 gy-5 diagnosis_list" id="kt_customers_table">
@@ -175,10 +238,10 @@ if (isset($_POST['category'])) {
                                         <thead>
                                             <!--begin::Table row-->
                                             <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-                                                <th class="w-100px text-center">Sl.No</th>
-                                                <th class="min-w-155px">Category</th>
-                                                <th class="min-w-50px">Status</th>
+                                                <th class="w-15px">SlNo</th>
                                                 <th class="min-w-125px">Actions</th>
+                                                <th class="min-w-125px">Team Name</th>
+                                                <th class="min-w-145px text-center">Team members</th>
                                             </tr>
                                             <!--end::Table row-->
                                         </thead>
@@ -187,44 +250,42 @@ if (isset($_POST['category'])) {
                                         <tbody class="fw-bold text-gray-600 ui-sortable">
                                             <?php
                                             $i = 1;
-                                            $sql = "SELECT * FROM `tba_service_category` where `is_delete`='0' ORDER BY `position` asc";
+                                            $sql = "SELECT * FROM `team` where `is_delete`='0' ORDER BY `position` asc";
                                             $result = mysqli_query($conn, $sql);
                                             while ($row = mysqli_fetch_assoc($result)) {
                                                 $id = encrypt_decrypt('encrypt', $row['id']);
+                                                $team_members = explode(',', $row['team_members']);
                                             ?>
                                                 <tr id="<?php echo $row['id']; ?>">
                                                     <!--begin::Name=-->
-                                                    <td class="priority text-center">
+                                                    <td class="priority">
                                                         <?php echo $i; ?>
                                                     </td>
                                                     <!--end::Name=-->
+                                                    <!--begin::Action=-->
+                                                    <td>
+                                                        <a href="add_m_team.php?<?php echo $action_string . '=' . $edit_string . '&' . $id_string . '=' . $id; ?>" class="menu-link px-3">Edit</a>
+                                                        <a onclick="deletion('<?php echo $action_string . '=' . $delete_string . '&' . $id_string . '=' . $id; ?>')" class="menu-link px-3 text-danger" data-kt-customer-table-filter="delete_row">Delete</a>
+                                                        <?php if ($row['is_active'] == '0') { ?>
+                                                            <a href="add_m_team.php?<?php echo $action_string . '=' . $deactive_string . '&' . $id_string . '=' . $id; ?>" class="menu-link px-3 text-warning">Inacive</a>
+                                                        <?php } else { ?>
+                                                            <a href="add_m_team.php?<?php echo $action_string . '=' . $active_string . '&' . $id_string . '=' . $id; ?>" class="menu-link px-3 text-success">Active</a>
+                                                        <?php } ?>
+                                                    </td>
+                                                    <!--end::Action=-->
                                                     <!--begin::Company=-->
                                                     <td>
                                                         <?php
-                                                        echo $row['category'];
+                                                        echo $row['team_name'];
                                                         ?>
                                                     </td>
-                                                    <td>
-                                                        <label class="form-check form-switch form-check-custom form-check-solid">
-                                                            <!--begin::Input-->
-                                                            <?php if ($row['is_active'] == '0') { ?>
-                                                                <a onclick="deactive('<?php echo $action_string . '=' . $deactive_string . '&' . $id_string . '=' . $id; ?>')">
-                                                                    <input class="form-check-input" name="is_active" type="checkbox" value="1" <?php echo ($row['is_active'] == '0') ? 'checked' : '' ?>>
-                                                                </a>
-                                                            <?php } else { ?>
-                                                                <a onclick="active('<?php echo $action_string . '=' . $active_string . '&' . $id_string . '=' . $id; ?>')">
-                                                                    <input class="form-check-input" name="is_active" type="checkbox" value="0" <?php echo ($row['is_active'] == '1') ? '' : 'checked' ?>>
-                                                                </a>
-                                                            <?php } ?>
-                                                            <!--end::Input-->
-                                                        </label>
+                                                    <td class="text-center">
+                                                        <?php
+                                                        foreach ($team_members as $member_id) {
+                                                            echo $users_name[$member_id] . "-" . $loginmobile[$member_id] . "-" . $loginmail[$member_id] . "<br>";
+                                                        }
+                                                        ?>
                                                     </td>
-                                                    <!--begin::Action=-->
-                                                    <td>
-                                                        <a href="add_tba_service_category.php?<?php echo $action_string . '=' . $edit_string . '&' . $id_string . '=' . $id; ?>" class="menu-link px-3"><img src="assets/media/icons/c_edit_icon_1.png"></a>
-                                                        <a onclick="deletion('<?php echo $action_string . '=' . $delete_string . '&' . $id_string . '=' . $id; ?>')" class="menu-link px-3" data-kt-customer-table-filter="delete_row"><img src="assets/media/icons/remove_icon_1.png"></a>
-                                                    </td>
-                                                    <!--end::Action=-->
                                                     <!--end::Company=-->
                                                 </tr>
                                             <?php
@@ -259,14 +320,21 @@ if (isset($_POST['category'])) {
 <script>
     $(document).ready(function() {
         var t, e, i;
-        i = document.querySelector("#add_new_category");
-        t = document.getElementById("add_new_category_submit_button");
+        i = document.querySelector("#add_new_team");
+        t = document.getElementById("add_new_team_submit_button");
         (e = FormValidation.formValidation(i, {
             fields: {
-                category: {
+                team_name: {
                     validators: {
                         notEmpty: {
-                            message: "Category is required"
+                            message: "Team is required"
+                        }
+                    }
+                },
+                team_member: {
+                    validators: {
+                        notEmpty: {
+                            message: "Team member is required"
                         }
                     }
                 },
@@ -305,18 +373,26 @@ if (isset($_POST['category'])) {
     });
 
     function myFunction() {
-        var category = $("#category").val();
+        var team_name = $("#team_name").val();
+        var team_member = $("#team_member").val();
         var id = $("#edit_id").val();
+        var blkstr = [];
+        $.each(team_member, function(idx2, val2) {
+            var str = val2;
+            blkstr.push(str);
+        });
+        var team_member = blkstr.join(",");
         $.ajax({
             type: "post",
-            url: "add_tba_service_category.php",
+            url: "add_m_team.php",
             data: {
-                category: category,
+                team_name: team_name,
+                team_member: team_member,
                 id: id
             },
             success: function(response) {
                 // console.log(response);
-                window.location = 'add_tba_service_category.php';
+                window.location = 'add_m_team.php';
             },
             error: function() {
                 alert('Error occurs!');
@@ -356,7 +432,7 @@ if (isset($_POST['category'])) {
             all[count] = trid;
             //alert(JSON.stringify(all));
         });
-        $.post("add_tba_service_category.php", {
+        $.post("add_m_team.php", {
                 order: all
             },
             function(data, status) {
@@ -369,25 +445,7 @@ if (isset($_POST['category'])) {
         if (strr) {
             var r = confirm("Are You Sure Want To Delete ?");
             if (r == true) {
-                window.location = "add_tba_service_category.php?" + strr;
-            }
-        }
-    }
-
-    function active(strr) {
-        if (strr) {
-            var r = confirm("Are You Sure Want To Active This ?");
-            if (r == true) {
-                window.location = "add_tba_service_category.php?" + strr;
-            }
-        }
-    }
-
-    function deactive(strr) {
-        if (strr) {
-            var r = confirm("Are You Sure Want To Deactive This ?");
-            if (r == true) {
-                window.location = "add_tba_service_category.php?" + strr;
+                window.location = "add_m_team.php?" + strr;
             }
         }
     }

@@ -56,14 +56,14 @@
                 }
                 $date30 = new DateTime(date('Y-m-d'));
                 $date30->modify('-29 day');
-                $sql1 = "SELECT * FROM `usermodules` WHERE parent = '0' AND status = '0' AND  `id` IN ($accper) ORDER BY `position` asc ";
+                $sql1 = "SELECT * FROM `usermodules` WHERE parent = '0' AND status = '0' AND is_active = '0' AND  `id` IN ($accper) ORDER BY `position` asc ";
                 $res1 = mysqli_query($conn, $sql1);
                 while ($row1 = mysqli_fetch_assoc($res1)) {
                     $mname = $row1['mname'];
                     $idparent = $row1['id'];
                     $main_url = $row1['url'];
                     $parent = $row1['parent'];
-                    $sql2 = "SELECT * FROM `usermodules` WHERE parent != '0' AND status = '0' AND parent='$idparent' AND `id` IN ($accper) ORDER BY `position` asc ";
+                    $sql2 = "SELECT * FROM `usermodules` WHERE parent != '0' AND status = '0' AND is_active = '0'  AND parent='$idparent' AND `id` IN ($accper) ORDER BY `position` asc ";
                    $res2 = mysqli_query($conn, $sql2);
                    $number = mysqli_num_rows($res2);
                 ?>
@@ -116,7 +116,7 @@
                                 <div class="menu-item">
                                     <?php
                                     if ($row2['submenu'] == '1') {
-                                        $sql4 = "SELECT * FROM `usermodules` WHERE id='$row2[id]' AND status = '0'  AND `id` IN ($accper) ORDER BY `position` asc ";
+                                        $sql4 = "SELECT * FROM `usermodules` WHERE id='$row2[id]' AND status = '0'  AND is_active = '0' AND `id` IN ($accper) ORDER BY `position` asc ";
                                         $res4 = mysqli_query($conn, $sql4);
                                         while ($row4 = mysqli_fetch_assoc($res4)) {
                                             $mname4 = $row4['mname'];

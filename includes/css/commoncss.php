@@ -330,4 +330,101 @@
         clear: both;
         margin-bottom: 70px;
     }
+
+    .select2-results__option[aria-selected=true] {
+        display: none;
+    }
+
+    .profile_form_control {
+        display: block;
+        width: 100%;
+        font-size: 1.1rem;
+        font-weight: 500;
+        line-height: 1.5;
+        color: gray;
+        background-color: #fff;
+        border-style: none;
+        border-bottom-style: solid;
+        border-color: lightgray;
+    }
+
+    .centered_text {
+        position: absolute;
+        top: 5%;
+        left: 45%;
+        width: 32%;
+        text-align: justify;
+    }
+
+    .signRow:nth-child(even) {
+
+        padding: 20px;
+        margin-top: 40px;
+        margin-bottom: 40px;
+    }
+
+    canvas {
+        border: 2px dotted black;
+        border-radius: 15px;
+        cursor: crosshair;
+        background-color: aliceblue;
+    }
+
+    .selectfile_div {
+        top: 978px;
+        left: 1112px;
+        width: 286px;
+        height: 45px;
+        background: #EEEEEE 0% 0% no-repeat padding-box;
+        border-radius: 5px;
+        opacity: 1;
+    }
+
+    .selectfile_text {
+        top: 988px;
+        left: 1132px;
+        width: 190px;
+        /* UI Properties */
+        text-align: center;
+        font: normal normal normal 20px/30px Roboto;
+        letter-spacing: 0px;
+        color: #4B6EC3;
+        opacity: 1;
+    }
+
+    .btn-rmv1 {
+        display: none;
+    }
+
+    .rmv {
+        display: inline-block;
+    }
+
+    .it {
+        height: 50px;
+        margin-left: 10px;
+    }
+
+    .announcement_text {
+        position: relative;
+        display: inline-block;
+        word-wrap: break-word;
+        overflow: hidden;
+        max-height: 2.1em;
+        line-height: 1.2em;
+        text-align: justify;
+    }
+
+    .login_ui {
+        top: 0px;
+        left: 0px;
+        /* height: 1080px; */
+        background: #4A50AF 0% 0% no-repeat padding-box;
+        box-shadow: 10px 0px 25px #00000029;
+        opacity: 1;
+    }
+
+    .form-switch.form-check-solid .form-check-input {
+        height: 1.8rem !important;
+    }
 </style>
